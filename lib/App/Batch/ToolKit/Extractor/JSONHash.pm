@@ -2,7 +2,7 @@ package App::Batch::ToolKit::Extractor::JSONHash;
 
 use strict;
 use warnings;
-use parent qw(App::Batch::ToolKit::Formatter::Base);
+use parent qw(App::Batch::ToolKit::Extractor);
 use JSON ();
 
 our $VERSION = '0.01';
@@ -12,8 +12,8 @@ sub name() { 'jsonhash' }
 sub setup {
     my $self = shift;
     unless ( @{ $self->rows } > 0 ) {
-        my $read_fh = $self->read_fh;
-        my $json    = do { local $|; <$read_fh>; };
+        my $fh = $self->fh;
+        my $json    = do { local $|; <$fh>; };
         my $rows    = JSON::decode_json($json);
         if ( ref $rows eq 'HASH' ) {
             $rows = [$rows];

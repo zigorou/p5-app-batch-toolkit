@@ -5,7 +5,7 @@ use warnings;
 
 use Class::Accessor::Lite (
     new => 0,
-    rw  => [qw/fields rows read_fh skip_column_names plugin_args/],
+    rw  => [qw/fields rows fh skip_column_names is_streaming plugin_args/],
 );
 use Iterator::Simple ();
 use Data::Dump qw(dump);
@@ -15,10 +15,11 @@ our $VERSION = '0.01';
 sub new {
     my ( $class, %args ) = @_;
 
-    $args{read_fh}  ||= *STDIN;
-    $args{fields}   ||= [];
-    $args{rows}     ||= [];
+    $args{fh}     ||= *STDIN;
+    $args{fields} ||= [];
+    $args{rows}   ||= [];
     $args{skip_column_names} = 0 unless defined $args{skip_column_names};
+    $args{is_streaming}      = 0 unless defined $args{is_streaming};
 
     my $self = bless +{%args} => $class;
     $self->setup;
@@ -26,7 +27,7 @@ sub new {
 }
 
 sub name() { 'base' }
-sub setup { }
+sub setup { my $self = shift; }
 
 sub fetchrow_arrayref {
     my $self = shift;
@@ -35,10 +36,10 @@ sub fetchrow_arrayref {
 
 sub fetchrow_hashref {
     my $self = shift;
-    my $row = $self->fetchrow_arrayref;
+    my $row  = $self->fetchrow_arrayref;
     return unless defined $row;
     my %h;
-    @h{@{$self->fields}} = @$row;
+    @h{ @{ $self->fields } } = @$row;
     return \%h;
 }
 
@@ -64,9 +65,7 @@ sub iterator {
             push( @next, $row );
         }
 
-        return $size > 1 ? (
-            @next > 0 ? \@next : undef
-        ) : $next[0];
+        return $size > 1 ? ( @next > 0 ? \@next : undef ) : $next[0];
     };
 }
 

@@ -2,10 +2,10 @@ package App::Batch::ToolKit::Extractor::CSV;
 
 use strict;
 use warnings;
-use parent qw(App::Batch::ToolKit::Formatter::Base);
+use parent qw(App::Batch::ToolKit::Extractor);
 use Class::Accessor::Lite (
     new => 0,
-    rw => [qw/csv is_streaming/]
+    rw => [qw/csv/]
 );
 use Text::CSV;
 
@@ -35,14 +35,14 @@ sub setup {
     $self->is_streaming(@{$self->data} > 0 ? 0 : 1);
     
     if ( @{ $self->fields } == 0 && !$self->skip_column_names ) {
-        $self->fields( $self->csv->getline( $self->read_fh ) );
+        $self->fields( $self->csv->getline( $self->fh ) );
     }
 }
 
 sub fetchrow_arrayref {
     my $self = shift;
     if ( $self->is_streaming ) {
-        return $self->csv->getline( $self->read_fh );
+        return $self->csv->getline( $self->fh );
     }
     else {
         return $self->SUPER::fetchrow_arrayref;
