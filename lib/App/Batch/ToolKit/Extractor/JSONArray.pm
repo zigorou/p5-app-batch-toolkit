@@ -1,4 +1,4 @@
-package App::Batch::ToolKit::Formatter::Plugin::JSONArray;
+package App::Batch::ToolKit::Extractor::JSONArray;
 
 use strict;
 use warnings;
@@ -23,26 +23,17 @@ sub setup {
     }
 }
 
-sub output {
-    my $self = shift;
-    my $json = JSON::encode_json([
-        $self->fields,
-        @{$self->rows},
-    ]);
-    $self->output_to_write_fh( $json );
-}
-
 1;
 
 __END__
 
 =head1 NAME
 
-App::Batch::ToolKit::Formatter::Plugin::JSONArray - write short description for App::Batch::ToolKit::Formatter::Plugin::JSONArray
+App::Batch::ToolKit::Extractor::JSONArray - write short description for App::Batch::ToolKit::Extractor::JSONArray
 
 =head1 SYNOPSIS
 
-  use App::Batch::ToolKit::Formatter::Plugin::JSONArray;
+  use App::Batch::ToolKit::Extractor::JSONArray;
 
 =head1 DESCRIPTION
 

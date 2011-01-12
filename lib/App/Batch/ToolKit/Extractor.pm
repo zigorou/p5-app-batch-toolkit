@@ -1,11 +1,11 @@
-package App::Batch::ToolKit::Formatter::Base;
+package App::Batch::ToolKit::Extractor;
 
 use strict;
 use warnings;
 
 use Class::Accessor::Lite (
     new => 0,
-    rw  => [qw/fields rows read_fh write_fh skip_column_names plugin_args/],
+    rw  => [qw/fields rows read_fh skip_column_names plugin_args/],
 );
 use Iterator::Simple ();
 use Data::Dump qw(dump);
@@ -16,7 +16,6 @@ sub new {
     my ( $class, %args ) = @_;
 
     $args{read_fh}  ||= *STDIN;
-    $args{write_fh} ||= *STDOUT;
     $args{fields}   ||= [];
     $args{rows}     ||= [];
     $args{skip_column_names} = 0 unless defined $args{skip_column_names};
@@ -71,26 +70,17 @@ sub iterator {
     };
 }
 
-sub output {}
-
-sub output_to_write_fh {
-    my ( $self, $stuff ) = @_;
-    my $write_fh = $self->write_fh;
-    syswrite( $write_fh, $stuff, length $stuff );
-    close( $write_fh );
-}
-
 1;
 
 __END__
 
 =head1 NAME
 
-App::Batch::ToolKit::Formatter::Base - write short description for App::Batch::ToolKit::Formatter::Base
+App::Batch::ToolKit::Extractor - write short description for App::Batch::ToolKit::Extractor
 
 =head1 SYNOPSIS
 
-  use App::Batch::ToolKit::Formatter::Base;
+  use App::Batch::ToolKit::Extractor;
 
 =head1 DESCRIPTION
 

@@ -1,4 +1,4 @@
-package App::Batch::ToolKit::Formatter::Plugin::CSV;
+package App::Batch::ToolKit::Extractor::CSV;
 
 use strict;
 use warnings;
@@ -55,11 +55,11 @@ __END__
 
 =head1 NAME
 
-App::Batch::ToolKit::Formatter::Plugin::CSV - write short description for App::Batch::ToolKit::Formatter::Plugin::CSV
+App::Batch::ToolKit::Extractor::CSV - write short description for App::Batch::ToolKit::Extractor::CSV
 
 =head1 SYNOPSIS
 
-  use App::Batch::ToolKit::Formatter::Plugin::CSV;
+  use App::Batch::ToolKit::Extractor::CSV;
 
 =head1 DESCRIPTION
 

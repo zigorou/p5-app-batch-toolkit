@@ -1,4 +1,4 @@
-package App::Batch::ToolKit::Formatter::Plugin::JSONHash;
+package App::Batch::ToolKit::Extractor::JSONHash;
 
 use strict;
 use warnings;
@@ -36,24 +36,17 @@ sub fetchrow_hashref {
     shift->SUPER::fetchrow_arrayref;
 }
 
-sub output {
-    my $self = shift;
-    my $json = JSON::encode_json($self->rows);
-    $self->output_to_write_fh( $json );
-
-}
-
 1;
 
 __END__
 
 =head1 NAME
 
-App::Batch::ToolKit::Formatter::Plugin::JSONHash - write short description for App::Batch::ToolKit::Formatter::Plugin::JSONHash
+App::Batch::ToolKit::Extractor::JSONHash - write short description for App::Batch::ToolKit::Extractor::JSONHash
 
 =head1 SYNOPSIS
 
-  use App::Batch::ToolKit::Formatter::Plugin::JSONHash;
+  use App::Batch::ToolKit::Extractor::JSONHash;
 
 =head1 DESCRIPTION
 
