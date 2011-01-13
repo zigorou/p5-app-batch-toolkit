@@ -30,37 +30,62 @@ sub name() { 'base' }
 sub setup { my $self = shift; }
 
 sub fetchrow_arrayref {
-    my $self = shift;
-    return shift @{ $self->rows };
+    my ( $self, $columns ) = @_;
+    $columns ||= [ 0 .. scalar( @{ $self->fields } ) - 1 ];
+    my $row = shift @{ $self->rows };
+    return $row unless defined $row;
+    return [ @$row[@$columns] ];
 }
 
 sub fetchrow_hashref {
-    my $self = shift;
-    my $row  = $self->fetchrow_arrayref;
+    my ( $self, $slices ) = @_;
+    my $columns = $self->slices_to_columns($slices);
+    my $row     = $self->fetchrow_arrayref($columns);
     return unless defined $row;
     my %h;
-    @h{ @{ $self->fields } } = @$row;
+    @h{ @{ $self->fields }[@$columns] } = @$row;
     return \%h;
 }
 
+sub slices_to_columns {
+    my ( $self, $slices ) = @_;
+    return [ 0 .. scalar( @{ $self->fields } ) - 1 ] unless defined $slices;
+
+    my $columns = [];
+    for ( my $i = 0 ; $i < @{ $self->fields } ; $i++ ) {
+        my $field = $self->fields->[$i];
+        push( @$columns, $i ) if ( $slices->{$field} );
+    }
+
+    return $columns;
+}
+
+sub columns_to_slices {
+    my ( $self, $columns ) = @_;
+    $columns ||= [ 0 .. scalar( @{ $self->fields } ) - 1 ];
+    return +{ map { $_ => 1 } @{ $self->fields }[@$columns] };
+}
+
 sub arrayref_iterator {
-    my ( $self, $size ) = @_;
-    $self->iterator( 'fetchrow_arrayref', $size );
+    my ( $self, $attrs, $size ) = @_;
+    $attrs ||= [];
+    $self->iterator( 'fetchrow_arrayref', $attrs, $size );
 }
 
 sub hashref_iterator {
-    my ( $self, $size ) = @_;
-    $self->iterator( 'fetchrow_hashref', $size );
+    my ( $self, $attrs, $size ) = @_;
+    $attrs ||= +{};
+    $self->iterator( 'fetchrow_hashref', $attrs, $size );
 }
 
 sub iterator {
-    my ( $self, $fetchrow_method, $size ) = @_;
+    my ( $self, $fetchrow_method, $attrs, $size ) = @_;
     $size ||= 1;
     Iterator::Simple::iterator {
         my @next;
         my $i = 0;
         while ( $i++ < $size ) {
-            my $row = $self->$fetchrow_method;
+            my $row = $self->$fetchrow_method($attrs);
             last unless defined $row;
             push( @next, $row );
         }
